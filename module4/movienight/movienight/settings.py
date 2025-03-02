@@ -52,6 +52,7 @@ class Dev(Configuration):
             "movies",
             "rest_framework",
             "rest_framework.authtoken",
+            'django_celery_results',
         ]
 
         MIDDLEWARE = [
@@ -147,6 +148,10 @@ class Dev(Configuration):
         BASE_URL = "https://indigoguru-torchlucas-8000.codio.io"
 
         OMDB_KEY = "1efbd3d9"
+
+        CELERY_RESULT_BACKEND = 'django-db'
+
+        CELERY_BROKER_URL = "redis://localhost:6379/0"
 
         SIMPLE_JWT = {
             "ACCESS_TOKEN_LIFETIME": timedelta(days=1),

@@ -15,7 +15,8 @@ from movies.api.serializers import (
 )
 from movies.models import Movie, MovieNight, MovieNightInvitation, Genre
 from movies.omdb_integration import fill_movie_details, search_and_save
-
+from movies.api.permissions import IsCreatorPermission, IsInviteePermission 
+from rest_framework.permissions import IsAuthenticated
 
 class MovieViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Movie.objects.all()
@@ -23,7 +24,8 @@ class MovieViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_object(self):
         movie = super(MovieViewSet, self).get_object()
-        return fill_movie_details(movie)
+        fill_movie_details(movie)
+        return movie
 
     @action(methods=["get"], detail=False)
     def search(self, request):
@@ -51,10 +53,10 @@ class MovieViewSet(viewsets.ReadOnlyModelViewSet):
 
 class MovieNightViewSet(viewsets.ModelViewSet):
     queryset = MovieNight.objects.all()
-
+    permission_classes = [IsCreatorPermission & IsAuthenticated]
 
     def get_serializer_class(self):
-        if self.action =="create":
+        if self.request.method == "POST" or self.action =="create":
           return MovieNightCreateSerializer
         return MovieNightSerializer
 
@@ -121,6 +123,7 @@ class MovieNightInvitationViewSet(
     viewsets.GenericViewSet,
 ):
     serializer_class = MovieNightInvitationSerializer
+    permission_classes = [IsInviteePermission & IsAuthenticated]
 
     def get_queryset(self):
         return MovieNightInvitation.objects.filter(invitee=self.request.user)
