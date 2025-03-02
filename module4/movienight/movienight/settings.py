@@ -53,6 +53,7 @@ class Dev(Configuration):
             "rest_framework",
             "rest_framework.authtoken",
             'django_celery_results',
+            'django_celery_beat',
         ]
 
         MIDDLEWARE = [
