@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 from datetime import timedelta
 from pathlib import Path
-from configuratios import Configuration, values
+from configurations import Configuration, values
 import os
 
 class Dev(Configuration):
@@ -152,3 +152,58 @@ class Dev(Configuration):
             "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
             "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
         }
+
+        REST_FRAMEWORK = {
+            "DEFAULT_PERMISSION_CLASSES":[
+             'rest_framework.permissions.IsAuthenticated',
+            ],
+            "DEFAULT_AUTHENTICATION_CLASSES":[
+                'rest_framework.authentication.BasicAuthentication',
+                'rest_framework.authentication.SessionAuthentication',
+                'rest_framework.authentication.TokenAuthentication',
+                'rest_framework_simplejwt.authentication.JWTAuthentication',
+            ],
+            "DEFAULT_PAGINATION_CLASS": 'rest_framework.pagination.PageNumberPagination',
+             'PAGE_SIZE': 100,
+        }
+            
+        
+
+        LOGGING = {
+                "version": 1,
+                "disable_existing_loggers": False,
+                "filters": {
+                        "require_debug_false": {
+                        "()": "django.utils.log.RequireDebugFalse",
+                        },
+                    },
+                "formatters": {
+                        "verbose": {
+                        "format": "{levelname} {asctime} {module}{process:d} {thread:d} {message}",
+                        "style": "{",
+                         },
+                    },
+                "handlers": {
+                        "console": {
+                            "class": "logging.StreamHandler",
+                            "stream": "ext://sys.stdout",
+                            "formatter": "verbose",
+                        },
+                        "mail_admins": {
+                            "level": "ERROR",
+                            "class": "django.utils.log.AdminEmailHandler",
+                            "filters": ["require_debug_false"],
+                        },
+                    },
+                "loggers": {
+                        "django.request": {
+                            "handlers": ["mail_admins"],
+                            "level": "ERROR",
+                            "propagate": True,
+                        },
+                    },
+                "root": {
+                            "handlers": ["console"],
+                            "level": "DEBUG",
+                    },
+            }

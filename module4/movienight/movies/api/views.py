@@ -21,6 +21,10 @@ class MovieViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
 
+    def get_object(self):
+        movie = super(MovieViewSet, self).get_object()
+        return fill_movie_details(movie)
+
     @action(methods=["get"], detail=False)
     def search(self, request):
         search_serializer = MovieSearchSerializer(data=request.GET)
@@ -47,6 +51,13 @@ class MovieViewSet(viewsets.ReadOnlyModelViewSet):
 
 class MovieNightViewSet(viewsets.ModelViewSet):
     queryset = MovieNight.objects.all()
+
+
+    def get_serializer_class(self):
+        if self.action =="create":
+          return MovieNightCreateSerializer
+        return MovieNightSerializer
+
 
     def get_object(self):
         movie_night = super(MovieNightViewSet, self).get_object()
